@@ -1,0 +1,55 @@
+enum TrafficState { GREEN, YELLOW, RED, PEDESTRIAN_CROSSING, BACK_TO_GREEN };
+TrafficState currentState = GREEN;
+
+void setup() {
+  pinMode(13, OUTPUT); // Red light
+  pinMode(12, OUTPUT); // Yellow light
+  pinMode(11, OUTPUT); // Green light
+  pinMode(5, OUTPUT);  // Pedestrian off
+  pinMode(4, OUTPUT);  // Pedestrian on
+  pinMode(2, INPUT);   // Pedestrian button
+}
+
+void loop() {
+  switch (currentState) {
+    case GREEN:
+      digitalWrite(11, HIGH);  // Green light on
+      digitalWrite(12, LOW);   // Yellow light off
+      digitalWrite(13, LOW);   // Red light off
+      digitalWrite(5, HIGH);   // Pedestrian light off
+      if (digitalRead(2) == HIGH) {
+        currentState = YELLOW;
+      }
+      break;
+
+    case YELLOW:
+      digitalWrite(11, LOW);   // Green light off
+      digitalWrite(12, HIGH);  // Yellow light on
+      delay(2000);
+      currentState = RED;
+      break;
+
+    case RED:
+      digitalWrite(12, LOW);   // Yellow light off
+      digitalWrite(13, HIGH);  // Red light on
+      digitalWrite(5, LOW);    // Pedestrian light off
+      delay(1500);
+      currentState = PEDESTRIAN_CROSSING;
+      break;
+
+    case PEDESTRIAN_CROSSING:
+      digitalWrite(4, HIGH);   // Pedestrian light on
+      delay(5000);             // Time for pedestrian to cross
+      digitalWrite(4, LOW);    // Pedestrian light off
+      currentState = BACK_TO_GREEN;
+      break;
+
+    case BACK_TO_GREEN:
+      digitalWrite(13, LOW);   // Red light off
+      digitalWrite(11, HIGH);  // Green light on
+      digitalWrite(5, HIGH);   // Pedestrian light off
+      delay(1000);
+      currentState = GREEN;
+      break;
+  }
+}
